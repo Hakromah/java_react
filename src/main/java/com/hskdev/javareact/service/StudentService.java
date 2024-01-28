@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,15 +47,27 @@ public class StudentService implements IStudentService {
                 .orElseThrow(() -> new StudentNotFoundException("Sorry, there is no student with this Id: " + id));
     }
 
+    // delete student
     @Override
     public void deleteStudent(Long id) {
-        if (!studentRepository.existsById(id)) {
+        Optional<Student> studentOptional = studentRepository.findById(id);
+
+        if (studentOptional.isPresent()) {
+            // Student found, proceed with deletion
+            studentRepository.deleteById(id);
+        } else {
+            // Student not found, throw exception
             throw new StudentNotFoundException("Sorry, student not found to be deleted");
         }
     }
 
+
     // Exception methods
     private boolean studentAlreadyExists(String email) {
-        return studentRepository.findByEmail(email).isPresent();
+        if (studentRepository.findByEmail(email).isPresent()) {
+            throw new StudentAlreadyExistsException("Student with email " + email + " already exists");
+        }
+        return false;
     }
 }
+
