@@ -36,7 +36,6 @@ public class StudentService implements IStudentService {
             st.setLastName(student.getLastName());
             st.setEmail(student.getEmail());
             st.setDepartment(student.getDepartment());
-
             return studentRepository.save(st);
         }).orElseThrow(() -> new StudentNotFoundException("Sorry, this student could not be found"));
     }
